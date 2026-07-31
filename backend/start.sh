@@ -7,5 +7,5 @@ if [ ! -d "chroma_db" ]; then
     python scripts/ingest.py
 fi
 
-# Start FastAPI
-uvicorn main:app --host 0.0.0.0 --port $PORT
+# Start FastAPI on Render's required port
+uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
