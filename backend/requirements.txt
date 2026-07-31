@@ -4,7 +4,9 @@ uvicorn[standard]
 python-dotenv
 pydantic
 pydantic-settings
-
+email-validator
+python-multipart
+aiofiles
 # LangChain
 langchain
 langchain-core
