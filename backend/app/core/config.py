@@ -16,12 +16,6 @@ class Settings(BaseSettings):
     # PostgreSQL
     database_url: str
 
-    def model_post_init(self, __context):
-        object.__setattr__(self, 'gemini_api_key', str(self.gemini_api_key))
-        object.__setattr__(self, 'openai_api_key', str(self.openai_api_key))
-        object.__setattr__(self, 'groq_api_key', str(self.groq_api_key))
-        object.__setattr__(self, 'database_url', str(self.database_url))
-
     # App
     app_env: str = "development"
     cors_origin: str = "http://localhost:5173"
@@ -32,11 +26,11 @@ class Settings(BaseSettings):
 
     # RAG tuning
     retriever_k: int = 3
-    similarity_threshold: float = 0.65
+    similarity_threshold: float = 0.3
     chunk_size: int = 400
     chunk_overlap: int = 50
 
-    # Session / context
+    # Session
     context_window_turns: int = 6
 
     class Config:
@@ -51,5 +45,4 @@ def get_settings() -> Settings:
     return Settings()
 
 
-# Convenience alias used throughout the app
 settings = get_settings()
