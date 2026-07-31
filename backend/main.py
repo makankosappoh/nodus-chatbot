@@ -37,17 +37,10 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     logger.info("🚀 Starting Nodus AI backend...")
 
-    # Initialize PostgreSQL tables
+    # Initialize PostgreSQL tables only — fast, no blocking
     init_db()
 
-    # Warm up ChromaDB
-    store = get_vector_store()
-    if store is None:
-        logger.warning(
-            "⚠️  ChromaDB not found. Run `python scripts/ingest.py` first."
-        )
-    else:
-        logger.info("✅ ChromaDB loaded successfully")
+    logger.info("✅ Backend ready — ChromaDB loads on first request")
     yield
     logger.info("👋 Shutting down Nodus AI backend")
 
