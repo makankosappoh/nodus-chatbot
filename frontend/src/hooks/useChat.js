@@ -18,6 +18,17 @@ localStorage.setItem(key, id)
 return id
 }
 
+// Browser TTS speak function — used to speak bot responses aloud
+function speakText(text) {
+if (!window.speechSynthesis) return
+window.speechSynthesis.cancel()
+const utterance = new SpeechSynthesisUtterance(text)
+utterance.rate = 1.0
+utterance.pitch = 1.0
+utterance.volume = 1.0
+window.speechSynthesis.speak(utterance)
+}
+
 export function useChat() {
 const sessionId = useRef(getOrCreateSessionId())
 const messagesEndRef = useRef(null)
@@ -26,6 +37,9 @@ const { stream, cancel } = useStream()
 // user info state
 const [userInfo, setUserInfo] = useState({ name: '', email: '' })
 const [userInfoSubmitted, setUserInfoSubmitted] = useState(false)
+
+// voice auto-speak toggle — user can turn this on/off
+const [voiceEnabled, setVoiceEnabled] = useState(false)
 
 // chat state
 const [messages, setMessages] = useState([
@@ -44,7 +58,7 @@ useEffect(() => {
 messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
 }, [messages])
 
-// submit user info — saves to Supabase and unlocks chat
+// submit user info — saves to backend and unlocks chat
 const submitUserInfo = useCallback(async (name, email) => {
 if (!name.trim() || !email.trim()) return
 
@@ -126,6 +140,11 @@ await stream(
     )
     setIsStreaming(false)
     setQuickReplies(QUICK_REPLIES)
+
+    // Auto speak bot response if voice enabled
+    if (voiceEnabled && fullContent) {
+        speakText(fullContent)
+    }
     },
     () => {
     setIsStreaming(false)
@@ -139,7 +158,7 @@ await stream(
     )
     }
 )
-}, [isStreaming, stream, userInfoSubmitted])
+}, [isStreaming, stream, userInfoSubmitted, voiceEnabled])
 
 const clearChat = useCallback(() => {
 const newId = uuidv4()
@@ -155,6 +174,7 @@ setQuickReplies([])
 setUserInfoSubmitted(false)
 setUserInfo({ name: '', email: '' })
 setError(null)
+window.speechSynthesis?.cancel()
 }, [])
 
 return {
@@ -170,5 +190,7 @@ sessionId: sessionId.current,
 userInfo,
 userInfoSubmitted,
 submitUserInfo,
+voiceEnabled,
+setVoiceEnabled,
 }
 }

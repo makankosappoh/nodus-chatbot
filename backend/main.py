@@ -21,6 +21,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.api.chat import router as chat_router
 from app.api.lead import router as lead_router
+from app.api.voice import router as voice_router
 from app.rag.retriever import get_vector_store
 from app.utils.database import init_db
 
@@ -39,7 +40,8 @@ async def lifespan(app: FastAPI):
 
     # Initialize PostgreSQL tables only — fast, no blocking
     init_db()
-
+    logger.info("Loading ChromaDB and embedding model...")
+    get_vector_store()
     logger.info("✅ Backend ready — ChromaDB loads on first request")
     yield
     logger.info("👋 Shutting down Nodus AI backend")
@@ -66,7 +68,7 @@ app.add_middleware(
 # ── Routers ───────────────────────────────────────────────────────────────────
 app.include_router(chat_router)
 app.include_router(lead_router)
-
+app.include_router(voice_router)
 
 # ── Health check ──────────────────────────────────────────────────────────────
 @app.get("/health", tags=["health"])

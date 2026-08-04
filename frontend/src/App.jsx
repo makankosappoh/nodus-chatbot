@@ -27,6 +27,8 @@ function ChatWidget() {
         clearChat,
         userInfoSubmitted,
         submitUserInfo,
+        voiceEnabled,
+        setVoiceEnabled,
     } = useChat()
 
     function handleOpen() {
@@ -60,6 +62,8 @@ function ChatWidget() {
                         onClose={() => setIsOpen(false)}
                         userInfoSubmitted={userInfoSubmitted}
                         onSubmitUserInfo={submitUserInfo}
+                        voiceEnabled={voiceEnabled}
+                        onToggleVoice={() => setVoiceEnabled(prev => !prev)}
                     />
                 </div>
             )}
