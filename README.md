@@ -11,6 +11,7 @@ A conversational AI chatbot built for Nodus Decoded, a boutique AI transformatio
 - Supports voice input — speak your question, review the text, then send
 - Streams responses word by word like ChatGPT
 - Logs every conversation for analytics
+- download leads and conversation as csv file
 
 ---
 
@@ -54,6 +55,10 @@ nodus-chatbot/
 │   ├── models/           # Cached sentence transformer model
 │   ├── scripts/
 │   │   └── ingest.py     # Builds ChromaDB from knowledge base files
+|   |   └── backup_db.py  # easy way download backup leads and conversation csv files in backend/Exports/
+|   |   └── pg_backup.py  # traditional way of direct postgres.sql db backup in backend/Exports/
+|   |   └── ER Diagram    # ER diagram png file
+|   |   └── ERD_schema.sql# ER diagram schema.sql
 │   ├── main.py           # FastAPI app entry point
 │   ├── requirements.txt
 │   ├── start.sh          # Production startup script
@@ -235,6 +240,64 @@ Free tier provides 10,000 characters per month — approximately 10-15 minutes o
 3. Restart the backend server
 
 If deployed on Railway, push to GitHub and Railway redeploys automatically. The ingest script runs on startup if ChromaDB is missing.
+
+---
+
+## Database Backup & ER Diagram
+
+### ER Diagram
+
+The database schema ER diagram is available in `backend/scripts/ERD_schema.sql`. The full table structure including constraints and foreign keys is in it.
+A visual version was generated using pgAdmin 4 also in it.
+
+---
+
+### CSV Backup
+
+Exports all leads and conversation logs as CSV files. Use this when you need data in Excel.
+
+```bash
+cd backend
+python scripts/backup_db.py
+```
+Output saved to `backend/exports/`:
+```
+leads_backup_YYYY-MM-DD.csv
+conversation_logs_backup_YYYY-MM-DD.csv
+```
+Run this at the end of every week, before any major deployment, or anytime you need the latest lead data in Excel format.
+
+---
+
+### Full PostgreSQL Backup
+
+Creates a complete `.sql` dump of the entire database including structure and all data.
+
+```bash
+cd backend
+python scripts/pg_backup.py
+```
+Output saved to `backend/exports/`:
+```
+nodus_chatbot_backup_YYYY-MM-DD_HH-MM.sql
+```
+To restore on any machine:
+```bash
+psql -U postgres -d nodus_chatbot -f nodus_chatbot_backup_YYYY-MM-DD.sql
+```
+Run this once a week, before moving to a new server.
+---
+
+### What each backup contains
+
+| File | Contains |
+|------|----------|
+| `leads_backup.csv` | All names, emails, phone numbers, and requirements captured by the chatbot |
+| `conversation_logs_backup.csv` | Every message and bot reply with intent classification and response time |
+| `nodus_chatbot_backup.sql` | Complete database — structure, all data, indexes, and constraints |
+
+> Backup files are saved to `backend/exports/` which is excluded from GitHub via `.gitignore`. They live only on your local machine or server. 
+### Never commit backup files to GitHub as they contain real user data.
 
 ---
 
