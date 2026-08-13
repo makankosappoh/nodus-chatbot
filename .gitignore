@@ -8,3 +8,4 @@ frontend/.env.local
 *.pyc
 .DS_Store
 Thumbs.db
+backend/exports/
