@@ -146,7 +146,7 @@ async def generate_response(
     messages.append(HumanMessage(content=message))
 
     llm = ChatGroq(
-        model="llama-3.1-8b-instant",
+        model="llama-3.3-70b-versatile",
         groq_api_key=str(settings.groq_api_key),
         temperature=0.3,       # slightly creative but mostly factual
         max_tokens=800, # enough for a detailed answer, not a novel

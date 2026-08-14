@@ -55,7 +55,7 @@ def classify_intent(message: str) -> IntentType:
     Cost: ~50 input tokens + 1 output token per call.
     """
     llm = ChatGroq(
-        model="llama-3.1-8b-instant",
+        model="llama-3.3-70b-versatile",
         groq_api_key=str(settings.groq_api_key),
         temperature=0.0,
         max_tokens=5,  # deterministic — we want consistent classification
